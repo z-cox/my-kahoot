@@ -1,21 +1,35 @@
-"""Live CT-scan chocolate bar quiz.
-Players:  https://<your-app>/            (join on their phones)
-Host:     https://<your-app>/?host=1     (project this; password = HOST_PASSWORD, default "ctscan")
-"""
+
 import io, os, threading, uuid
 import streamlit as st
 
-st.set_page_config(page_title="Name That Bar", page_icon="🍫", layout="centered")
+st.set_page_config(page_title="Guess the candy", page_icon="🍫", layout="centered")
 
 # ---- EDIT ME: one entry per scan. Options are shown in this order. ----
 QUESTIONS = [
-    {"img": "images/aero.gif", "answer": "Aero",
-     "options": ["Aero", "Kit Kat", "Crunchie", "Mr. Big"]},
+    {"img": "images/kitkat.gif", "answer": "Kit Kat",
+     "options": ["Twix", "Toblerone", "Wafer Bar", "Kit Kat"]},
     {"img": "images/coffee-crisp.gif", "answer": "Coffee Crisp",
-     "options": ["Twix", "Coffee Crisp", "Caramilk", "Wunderbar"]},
-    {"img": "images/kinder.gif", "answer": "Kinder Bueno",
-     "options": ["Mars", "Kinder Bueno", "Toblerone", "Snickers"]},
+     "options": ["Coffee Crisp", "Butterfinger", "Crispy Crunch", "Crunchie"]},
+    {"img": "images/aero.gif", "answer": "Aero",
+     "options": ["Bounty", "Dairy Milk", "Aero", "Caramilk"]},
+    {"img": "images/snickers.gif", "answer": "Snickers",
+     "options": ["Mars", "Oh Henry", "Snickers", "Mr. Big"]},
+    {"img": "images/ohenry.gif", "answer": "Oh Henry",
+     "options": ["Oh Henry", "Mars", "Baby Ruth", "Mr. Big"]},
+    {"img": "images/reese.gif", "answer": "Reese's",
+     "options": ["Butterfinger", "Reese's", "Peppermint Patty", "Caramel"]},
+    {"img": "images/twizzler.gif", "answer": "Twizzlers",
+     "options": ["Red Vines", "Twizzlers", "M&M's", "Skittles"]},
+    {"img": "images/nerds.gif", "answer": "Nerd Rope",
+     "options": ["Nerd Rope", "Pixy Sticks", "Runts", "Sweetarts"]},
+    {"img": "images/skittles.gif", "answer": "Skittles",
+     "options": ["M&M's", "Reese's Pieces", "Smarties", "Skittles"]},
+    {"img": "images/ring-pop.gif", "answer": "Ring Pop",
+     "options": ["Dum Dums", "Jolly Ranchers", "Ring Pop", "Starbursts"]},
+    {"img": "images/kinder.gif", "answer": "Kinder Egg",
+     "options": ["Ferrero Rocher", "Kinder Egg", "Chocolate Orange", "Lindt Ball"]},
 ]
+
 HOST_PASSWORD = st.secrets.get("HOST_PASSWORD", os.environ.get("HOST_PASSWORD", "ctscan"))
 
 @st.cache_resource
@@ -80,8 +94,8 @@ def host_view():
         ph, qi = G["phase"], G["q"]
         players = list(G["players"].values())
         if ph == "lobby":
-            st.title("Name that bar 🍫")
-            st.subheader("These chocolate bars were CT scanned. Can you tell which is which?")
+            st.title("Guess the candy")
+            st.subheader("Various chocolate and candy has been CT scanned. Can you tell which is which?")
             if url:
                 try:
                     import qrcode
@@ -104,7 +118,7 @@ def host_view():
                 st.bar_chart(counts)
                 board(5)
         else:
-            st.title("Final results 🏆")
+            st.title("Results")
             board(10)
     screen()
 
@@ -112,8 +126,8 @@ def host_view():
 def player_view():
     pid = st.query_params.get("pid")
     if not pid or pid not in G["players"]:
-        st.title("Name that bar 🍫")
-        st.write("Chocolate bars, scanned in a CT machine. Guess which is which.")
+        st.title("Guess the candy")
+        st.write("Various chocolate and candy has been CT scanned. Can you tell which is which?")
         name = st.text_input("Your name", max_chars=20)
         if st.button("Join", type="primary", disabled=not name.strip()):
             pid = uuid.uuid4().hex[:8]
